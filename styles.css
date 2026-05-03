@@ -1,0 +1,270 @@
+:root {
+  color-scheme: dark;
+  --bg: #151114;
+  --ink: #fff7ee;
+  --muted: #cbbfb8;
+  --panel: #221a1f;
+  --line: #4b363e;
+  --coral: #ff6d67;
+  --teal: #41d7c7;
+  --gold: #f3bd54;
+  --violet: #8b6cff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button {
+  border: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.shell {
+  width: min(1180px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 18px 0 32px;
+}
+
+.hero {
+  position: relative;
+  min-height: 340px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #0e0b0d;
+}
+
+.hero img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(12, 8, 10, .88), rgba(12, 8, 10, .34), rgba(12, 8, 10, .2));
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 1;
+  width: min(540px, 92%);
+  padding: 42px;
+}
+
+.kicker {
+  margin: 0 0 10px;
+  color: var(--teal);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+h1, h2, p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 12px;
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: .9;
+  letter-spacing: 0;
+}
+
+h2 {
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+
+.hero-copy p:last-child {
+  max-width: 32rem;
+  color: var(--muted);
+  font-size: 1.08rem;
+}
+
+.topbar,
+.grid {
+  display: grid;
+  gap: 12px;
+}
+
+.topbar {
+  grid-template-columns: repeat(4, 1fr);
+  margin: 12px 0;
+}
+
+.topbar div,
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.topbar div {
+  padding: 14px;
+}
+
+.topbar span,
+.panel-head span,
+.card small,
+.log {
+  color: var(--muted);
+}
+
+.topbar strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.6rem;
+}
+
+.grid {
+  grid-template-columns: 1.25fr .9fr;
+  align-items: start;
+}
+
+.panel {
+  padding: 16px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.districts,
+.closet,
+.crew {
+  display: grid;
+  gap: 10px;
+}
+
+.district,
+.card,
+.member,
+.last-pull {
+  border: 1px solid #5b444e;
+  border-radius: 8px;
+  background: #191317;
+  padding: 12px;
+}
+
+.district {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.district h3,
+.card h3,
+.member h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+}
+
+.district p,
+.card p,
+.member p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.primary,
+.district button,
+.ghost {
+  min-height: 42px;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-weight: 800;
+}
+
+.primary,
+.district button {
+  background: var(--coral);
+  color: #1d0e10;
+}
+
+.primary:disabled,
+.district button:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+.ghost {
+  background: #31242b;
+  color: var(--ink);
+}
+
+.relic-art {
+  width: 100%;
+  aspect-ratio: 1.6;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  margin-bottom: 12px;
+}
+
+.last-pull {
+  margin-top: 12px;
+}
+
+.closet {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.card {
+  min-height: 118px;
+  border-color: var(--rarity, #5b444e);
+}
+
+.card strong {
+  color: var(--rarity, var(--gold));
+}
+
+.member {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.log {
+  min-height: 46px;
+  margin-top: 12px;
+}
+
+@media (max-width: 760px) {
+  .hero {
+    min-height: 420px;
+  }
+
+  .hero-copy {
+    padding: 28px;
+  }
+
+  .topbar,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .district {
+    grid-template-columns: 1fr;
+  }
+}

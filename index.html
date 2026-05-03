@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Velvet District</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <img src="assets/hero-painterly.png" alt="Painterly fashion crew in a neon boutique district">
+        <div class="hero-copy">
+          <p class="kicker">Baddie Gacha PBBG</p>
+          <h1>Velvet District</h1>
+          <p>Build a painterly style crew, pull relics, work districts, and climb the scene.</p>
+        </div>
+      </section>
+
+      <section class="topbar" aria-label="Player resources">
+        <div><span>Coins</span><strong id="coins">0</strong></div>
+        <div><span>Gems</span><strong id="gems">0</strong></div>
+        <div><span>Influence</span><strong id="influence">0</strong></div>
+        <div><span>Power</span><strong id="power">0</strong></div>
+      </section>
+
+      <section class="grid">
+        <article class="panel actions">
+          <div class="panel-head">
+            <h2>Districts</h2>
+            <button id="resetBtn" class="ghost">Reset</button>
+          </div>
+          <div id="districts" class="districts"></div>
+        </article>
+
+        <article class="panel gacha">
+          <div class="panel-head">
+            <h2>Gacha</h2>
+            <span id="pity">Pity 0/10</span>
+          </div>
+          <img class="relic-art" src="assets/relics-painterly.png" alt="Painterly fashion relics">
+          <button id="pullBtn" class="primary">Pull relic - 100 coins</button>
+          <div id="lastPull" class="last-pull">Your first pull is waiting.</div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h2>Closet</h2>
+            <span id="collectionCount">0/0</span>
+          </div>
+          <div id="closet" class="closet"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h2>Crew</h2>
+            <span id="rank">Rookie</span>
+          </div>
+          <div id="crew" class="crew"></div>
+          <div id="log" class="log" aria-live="polite"></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
