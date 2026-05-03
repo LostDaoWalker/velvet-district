@@ -49,7 +49,7 @@ h1, h2, h3, p { margin-top: 0; }
 h1 { margin-bottom: 4px; font-size: 2rem; line-height: 1; }
 h2 { margin-bottom: 4px; font-size: 1.2rem; }
 h3 { margin-bottom: 8px; font-size: 1.15rem; }
-p { color: var(--muted); }
+p { color: var(--muted); margin-bottom: 0; }
 
 .hidden { display: none !important; }
 .quiet, .fine { color: var(--muted); }
@@ -117,8 +117,7 @@ p { color: var(--muted); }
 .auth-toggle,
 .button-row,
 .status,
-.bottom-nav,
-.meta-row {
+.bottom-nav {
   display: grid;
   gap: 8px;
 }
@@ -140,7 +139,13 @@ p { color: var(--muted); }
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  align-items: end;
+  align-items: center;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .kicker {
@@ -152,23 +157,26 @@ p { color: var(--muted); }
 }
 
 .status {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 }
 
-.status div {
+.status div,
+.pill {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
   padding: 10px 12px;
 }
 
-.status span {
+.status span,
+.pill span {
   display: block;
   color: var(--muted);
   font-size: .78rem;
 }
 
-.status strong {
+.status strong,
+.pill strong {
   display: block;
   margin-top: 2px;
   font-size: 1.18rem;
@@ -178,7 +186,7 @@ p { color: var(--muted); }
   display: none;
   min-height: 0;
   overflow: auto;
-  padding: 16px;
+  padding: 18px;
 }
 
 .screen.active {
@@ -190,7 +198,7 @@ p { color: var(--muted); }
   justify-content: space-between;
   align-items: start;
   gap: 14px;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .screen-head > * {
@@ -203,23 +211,13 @@ p { color: var(--muted); }
 
 .focus-card {
   display: grid;
-  gap: 14px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--soft);
-  padding: 16px;
+  gap: 12px;
+  padding: 8px 0 0;
 }
 
-.meta-row {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.meta-row span {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 9px 10px;
+.line-meta {
   color: var(--muted);
-  background: #100c0f;
+  margin-bottom: 0;
 }
 
 .primary,
@@ -227,7 +225,7 @@ p { color: var(--muted); }
 .danger,
 .tab,
 .nav-item {
-  min-height: 42px;
+  min-height: 40px;
   border-radius: 8px;
   padding: 0 14px;
   font-weight: 800;
@@ -267,7 +265,7 @@ button:disabled {
 
 .relic-art {
   width: 100%;
-  max-height: 230px;
+  max-height: 170px;
   object-fit: cover;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -288,9 +286,10 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  border: 1px solid var(--line);
+  border: 0;
   border-left-color: var(--rarity, var(--line));
   border-left-width: 4px;
+  border-left-style: solid;
   border-radius: 8px;
   background: #100c0f;
   padding: 10px 12px;
@@ -303,12 +302,17 @@ button:disabled {
 
 .drawer {
   margin-top: 10px;
-  padding: 12px;
+  padding: 10px 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
 }
 
 .drawer summary {
   cursor: pointer;
   font-weight: 800;
+  color: var(--muted);
 }
 
 .drawer .profile-form,
@@ -318,6 +322,12 @@ button:disabled {
 
 .bottom-nav {
   grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.nav-item {
+  color: var(--muted);
+  font-size: .9rem;
 }
 
 .nav-item.active,
@@ -327,8 +337,9 @@ button:disabled {
 }
 
 .toast {
-  padding: 10px 12px;
+  padding: 8px 10px;
   color: var(--muted);
+  font-size: .9rem;
 }
 
 .pull-dialog {
@@ -353,8 +364,7 @@ button:disabled {
 
   .auth-screen,
   .status,
-  .button-row,
-  .meta-row {
+  .button-row {
     grid-template-columns: 1fr;
   }
 

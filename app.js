@@ -154,11 +154,7 @@ function renderDistrict(data, state, derived) {
   document.querySelector("#districtFocus").innerHTML = `
     <h3>${district.name}</h3>
     <p>${district.text}</p>
-    <div class="meta-row">
-      <span>${district.cost} cost</span>
-      <span>${district.coins} coins</span>
-      <span>${district.influence} influence</span>
-    </div>
+    <p class="line-meta">${district.cost} cost · ${district.coins} coins · ${district.influence} influence</p>
     <button id="workBtn" class="primary" ${locked ? "disabled" : ""}>Work District</button>
   `;
   document.querySelector("#workBtn").addEventListener("click", workDistrict);
@@ -174,10 +170,7 @@ function renderCollection(data, state, derived) {
   document.querySelector("#setFocus").innerHTML = `
     <h3>${set.name}</h3>
     <p>${set.complete ? "Set bonus active" : "Collect every piece to activate the bonus."}</p>
-    <div class="meta-row">
-      <span>${set.owned}/${set.relics.length} owned</span>
-      <span>+${set.bonus} power</span>
-    </div>
+    <p class="line-meta">${set.owned}/${set.relics.length} owned · +${set.bonus} power</p>
     <div class="mini-list">
       ${relics.map((relic) => {
     const count = state.pulls[relic.id] || 0;
@@ -197,10 +190,7 @@ function renderGoals(data, derived) {
   document.querySelector("#activeGoal").innerHTML = `
     <h3>${active.name}</h3>
     <p>${active.text}</p>
-    <div class="meta-row">
-      <span>${active.claimed ? "Done" : `${Math.min(active.progress, active.need)}/${active.need}`}</span>
-      <span>${rewardText(active.reward)}</span>
-    </div>
+    <p class="line-meta">${active.claimed ? "Done" : `${Math.min(active.progress, active.need)}/${active.need}`} · ${rewardText(active.reward)}</p>
   `;
 
   document.querySelector("#crew").innerHTML = data.crew.map((member) => `
