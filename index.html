@@ -34,24 +34,19 @@
         <header class="app-header">
           <div>
             <p class="kicker" id="crewName">Velvet Crew</p>
-            <h1>Velvet District</h1>
             <p id="rank">Rookie</p>
           </div>
           <div class="header-actions">
             <div class="pill"><span>Coins</span><strong id="coins">0</strong></div>
+            <div class="pill"><span>Energy</span><strong id="energy">0</strong></div>
+            <div class="pill"><span>Power</span><strong id="power">0</strong></div>
             <button id="dailyBtn" class="ghost">Daily</button>
           </div>
         </header>
 
-        <section class="status" aria-label="Player resources">
-          <div><span>Energy</span><strong id="energy">0</strong></div>
-          <div><span>Power</span><strong id="power">0</strong></div>
-        </section>
-
         <section class="screen active" data-panel="work">
           <div class="screen-head">
             <div>
-              <h2>Work</h2>
               <p id="districtMeta">Choose a district.</p>
             </div>
             <select id="districtSelect" aria-label="District"></select>
@@ -62,7 +57,6 @@
         <section class="screen" data-panel="pull">
           <div class="screen-head">
             <div>
-              <h2>Pull</h2>
               <p id="pity">Pity 0/10</p>
             </div>
             <span id="gems" class="quiet">0 gems</span>
@@ -77,7 +71,6 @@
         <section class="screen" data-panel="closet">
           <div class="screen-head">
             <div>
-              <h2>Closet</h2>
               <p id="collectionCount">0/0 relics</p>
             </div>
             <select id="setSelect" aria-label="Wardrobe set"></select>
@@ -88,7 +81,6 @@
         <section class="screen" data-panel="account">
           <div class="screen-head">
             <div>
-              <h2>Account</h2>
               <p id="errandCount">0/0 goals</p>
             </div>
             <button id="logoutBtn" class="ghost">Logout</button>

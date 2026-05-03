@@ -3,7 +3,7 @@
   --bg: #121012;
   --panel: #1d171b;
   --soft: #171215;
-  --line: #3b3037;
+  --line: #32282f;
   --ink: #fff8ef;
   --muted: #b9aba5;
   --coral: #ff756b;
@@ -79,6 +79,11 @@ p { color: var(--muted); margin-bottom: 0; }
   background: var(--panel);
 }
 
+.screen {
+  border: 0;
+  background: transparent;
+}
+
 .auth-art {
   position: relative;
   min-height: 460px;
@@ -130,7 +135,7 @@ p { color: var(--muted); margin-bottom: 0; }
 .game-screen {
   height: 100vh;
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
   gap: 10px;
   padding: 12px 0;
 }
@@ -143,9 +148,10 @@ p { color: var(--muted); margin-bottom: 0; }
 }
 
 .header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(72px, auto)) auto;
+  align-items: stretch;
+  gap: 6px;
 }
 
 .kicker {
@@ -156,37 +162,30 @@ p { color: var(--muted); margin-bottom: 0; }
   text-transform: uppercase;
 }
 
-.status {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.status div,
 .pill {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
-  padding: 10px 12px;
+  padding: 7px 10px;
 }
 
-.status span,
 .pill span {
   display: block;
   color: var(--muted);
-  font-size: .78rem;
+  font-size: .72rem;
 }
 
-.status strong,
 .pill strong {
   display: block;
-  margin-top: 2px;
-  font-size: 1.18rem;
+  margin-top: 1px;
+  font-size: 1rem;
 }
 
 .screen {
   display: none;
   min-height: 0;
   overflow: auto;
-  padding: 18px;
+  padding: 16px 4px;
 }
 
 .screen.active {
@@ -198,7 +197,11 @@ p { color: var(--muted); margin-bottom: 0; }
   justify-content: space-between;
   align-items: start;
   gap: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+}
+
+.screen-head p {
+  font-size: .9rem;
 }
 
 .screen-head > * {
@@ -211,8 +214,8 @@ p { color: var(--muted); margin-bottom: 0; }
 
 .focus-card {
   display: grid;
-  gap: 12px;
-  padding: 8px 0 0;
+  gap: 10px;
+  padding: 4px 0 0;
 }
 
 .line-meta {
@@ -243,8 +246,8 @@ p { color: var(--muted); margin-bottom: 0; }
 .ghost,
 .tab,
 .nav-item {
-  border: 1px solid var(--line);
-  background: #211a1f;
+  border: 0;
+  background: transparent;
   color: var(--ink);
 }
 
@@ -265,7 +268,7 @@ button:disabled {
 
 .relic-art {
   width: 100%;
-  max-height: 170px;
+  max-height: 140px;
   object-fit: cover;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -323,23 +326,29 @@ button:disabled {
 .bottom-nav {
   grid-template-columns: repeat(4, 1fr);
   gap: 6px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
 }
 
 .nav-item {
   color: var(--muted);
   font-size: .9rem;
+  min-height: 34px;
 }
 
 .nav-item.active,
 .tab.active {
-  background: var(--ink);
-  color: #1a0d0f;
+  background: #211a1f;
+  color: var(--ink);
 }
 
 .toast {
-  padding: 8px 10px;
+  min-height: 20px;
+  padding: 0 2px;
   color: var(--muted);
-  font-size: .9rem;
+  font-size: .86rem;
+  border: 0;
+  background: transparent;
 }
 
 .pull-dialog {
@@ -363,7 +372,7 @@ button:disabled {
   }
 
   .auth-screen,
-  .status,
+  .header-actions,
   .button-row {
     grid-template-columns: 1fr;
   }

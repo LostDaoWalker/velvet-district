@@ -153,9 +153,9 @@ function renderDistrict(data, state, derived) {
   document.querySelector("#districtMeta").textContent = `${need} · ${district.energy} energy`;
   document.querySelector("#districtFocus").innerHTML = `
     <h3>${district.name}</h3>
-    <p>${district.text}</p>
+    <p class="line-meta">${district.text}</p>
     <p class="line-meta">${district.cost} cost · ${district.coins} coins · ${district.influence} influence</p>
-    <button id="workBtn" class="primary" ${locked ? "disabled" : ""}>Work District</button>
+    <button id="workBtn" class="primary" ${locked ? "disabled" : ""}>Work</button>
   `;
   document.querySelector("#workBtn").addEventListener("click", workDistrict);
 }
@@ -169,7 +169,7 @@ function renderCollection(data, state, derived) {
   const relics = data.relics.filter((relic) => relic.set === selectedSet);
   document.querySelector("#setFocus").innerHTML = `
     <h3>${set.name}</h3>
-    <p>${set.complete ? "Set bonus active" : "Collect every piece to activate the bonus."}</p>
+    <p class="line-meta">${set.complete ? "Bonus active" : "Collect every piece."}</p>
     <p class="line-meta">${set.owned}/${set.relics.length} owned · +${set.bonus} power</p>
     <div class="mini-list">
       ${relics.map((relic) => {
