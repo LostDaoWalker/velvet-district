@@ -4,6 +4,7 @@ A painterly baddie gacha PBBG for the browser, ready for Render hosting.
 
 ## Play Loop
 
+- Register or log in to keep an online crew save.
 - Work districts to earn coins and influence.
 - Spend coins on relic pulls.
 - Collect relics to raise power.
@@ -34,6 +35,15 @@ npm start
 Open `http://localhost:3000`.
 
 Without `DATABASE_URL`, the server writes local dev saves to `dev-saves.json`.
+
+## Verification
+
+```bash
+npm run check
+npm run smoke
+```
+
+`check` validates JavaScript syntax and game data. `smoke` expects the app running at `http://127.0.0.1:3020` unless `SMOKE_BASE_URL` is set.
 
 ## Render Deploy
 

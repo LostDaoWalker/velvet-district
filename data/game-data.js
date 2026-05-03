@@ -9,6 +9,10 @@ export const GAME_DATA = {
     tenPullCost: 900,
     pityLimit: 10
   },
+  starterProfile: {
+    crewName: "Velvet Crew",
+    handle: "rookie"
+  },
   ranks: [
     ["Rookie", 0],
     ["Local Icon", 60],
