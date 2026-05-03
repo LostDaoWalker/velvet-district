@@ -13,8 +13,8 @@
           <img src="assets/hero-painterly.png" alt="Painterly fashion crew in a neon boutique district">
           <div>
             <p class="kicker">Velvet District</p>
-            <h1>Sign in to your crew</h1>
-            <p>Online saves, server-side pulls, and a quieter baddie PBBG flow.</p>
+            <h1>Sign in</h1>
+            <p>Keep your crew, pulls, and progress online.</p>
           </div>
         </div>
         <form id="authForm" class="auth-card">
@@ -31,15 +31,14 @@
       </section>
 
       <section id="gameView" class="game-screen hidden">
-        <section class="hero compact">
-          <img src="assets/hero-painterly.png" alt="Painterly fashion crew in a neon boutique district">
-          <div class="hero-copy">
+        <header class="app-header">
+          <div>
             <p class="kicker" id="crewName">Velvet Crew</p>
             <h1>Velvet District</h1>
             <p id="rank">Rookie</p>
           </div>
-          <button id="logoutBtn" class="ghost corner">Logout</button>
-        </section>
+          <button id="dailyBtn" class="ghost">Daily</button>
+        </header>
 
         <section class="status" aria-label="Player resources">
           <div><span>Coins</span><strong id="coins">0</strong></div>
@@ -47,88 +46,72 @@
           <div><span>Power</span><strong id="power">0</strong></div>
         </section>
 
-        <nav class="tabs" aria-label="Game sections">
-          <button class="tab active" data-view="play">Play</button>
-          <button class="tab" data-view="collection">Collection</button>
-          <button class="tab" data-view="goals">Goals</button>
-        </nav>
-
-        <section class="view active" data-panel="play">
-          <article class="panel focus-panel">
-            <div class="panel-head">
-              <div>
-                <h2>Work</h2>
-                <p id="districtMeta">Choose a district.</p>
-              </div>
-              <select id="districtSelect" aria-label="District"></select>
+        <section class="screen active" data-panel="work">
+          <div class="screen-head">
+            <div>
+              <h2>Work</h2>
+              <p id="districtMeta">Choose a district.</p>
             </div>
-            <div id="districtFocus" class="feature-card"></div>
-          </article>
-
-          <article class="panel gacha-panel">
-            <div class="panel-head">
-              <div>
-                <h2>Gacha</h2>
-                <p id="pity">Pity 0/10</p>
-              </div>
-              <span id="gems">0 gems</span>
-            </div>
-            <div class="button-row">
-              <button id="pullBtn" class="primary">Pull</button>
-              <button id="tenPullBtn" class="primary alt">Ten pull</button>
-            </div>
-            <button id="dailyBtn" class="ghost wide">Claim Daily</button>
-          </article>
+            <select id="districtSelect" aria-label="District"></select>
+          </div>
+          <div id="districtFocus" class="focus-card"></div>
         </section>
 
-        <section class="view" data-panel="collection">
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h2>Sets</h2>
-                <p id="setCount">0/0 active</p>
-              </div>
+        <section class="screen" data-panel="pull">
+          <div class="screen-head">
+            <div>
+              <h2>Pull</h2>
+              <p id="pity">Pity 0/10</p>
             </div>
-            <div id="sets" class="drawer-list scroll-area"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h2>Closet</h2>
-                <p id="collectionCount">0/0 relics</p>
-              </div>
-            </div>
-            <div id="closet" class="closet scroll-area"></div>
-          </article>
+            <span id="gems" class="quiet">0 gems</span>
+          </div>
+          <img class="relic-art" src="assets/relics-painterly.png" alt="Painterly fashion relics">
+          <div class="button-row">
+            <button id="pullBtn" class="primary">Pull</button>
+            <button id="tenPullBtn" class="primary alt">Ten pull</button>
+          </div>
         </section>
 
-        <section class="view" data-panel="goals">
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h2>Errands</h2>
-                <p id="errandCount">0/0 complete</p>
-              </div>
+        <section class="screen" data-panel="closet">
+          <div class="screen-head">
+            <div>
+              <h2>Closet</h2>
+              <p id="collectionCount">0/0 relics</p>
             </div>
-            <div id="errands" class="drawer-list scroll-area"></div>
-          </article>
+            <select id="setSelect" aria-label="Wardrobe set"></select>
+          </div>
+          <div id="setFocus" class="focus-card"></div>
+        </section>
 
-          <article class="panel">
-            <div class="panel-head">
-              <div>
-                <h2>Profile</h2>
-                <p>Account-lite identity.</p>
-              </div>
-              <button id="resetBtn" class="ghost">Reset</button>
+        <section class="screen" data-panel="account">
+          <div class="screen-head">
+            <div>
+              <h2>Account</h2>
+              <p id="errandCount">0/0 goals</p>
             </div>
+            <button id="logoutBtn" class="ghost">Logout</button>
+          </div>
+          <div id="activeGoal" class="focus-card"></div>
+          <details class="drawer">
+            <summary>Profile</summary>
             <form id="profileForm" class="profile-form">
               <label>Crew name <input id="profileCrewName" name="crewName" type="text" maxlength="32"></label>
               <button class="primary" type="submit">Save</button>
             </form>
-            <div id="crew" class="crew scroll-area"></div>
-          </article>
+          </details>
+          <details class="drawer">
+            <summary>Crew bonuses</summary>
+            <div id="crew" class="crew"></div>
+          </details>
+          <button id="resetBtn" class="danger">Reset run</button>
         </section>
+
+        <nav class="bottom-nav" aria-label="Game sections">
+          <button class="nav-item active" data-view="work">Work</button>
+          <button class="nav-item" data-view="pull">Pull</button>
+          <button class="nav-item" data-view="closet">Closet</button>
+          <button class="nav-item" data-view="account">Account</button>
+        </nav>
 
         <section class="toast" aria-live="polite">
           <div id="lastPull">Loading Velvet District...</div>
@@ -137,14 +120,14 @@
     </main>
 
     <dialog id="pullDialog" class="pull-dialog">
-      <div class="panel-head">
+      <div class="screen-head">
         <div>
           <h2>Pull Results</h2>
           <p id="pullSummary">New relics joined the closet.</p>
         </div>
         <button id="closePullDialog" class="ghost">Close</button>
       </div>
-      <div id="pullResults" class="closet"></div>
+      <div id="pullResults" class="result-list"></div>
     </dialog>
 
     <script src="app.js"></script>

@@ -1,8 +1,9 @@
 let model = null;
 let busy = false;
-let currentView = "play";
+let currentView = "work";
 let authMode = "login";
 let selectedDistrict = "";
+let selectedSet = "";
 
 async function api(path, options = {}) {
   const response = await fetch(path, {
@@ -114,6 +115,9 @@ function render() {
   if (!selectedDistrict || !data.districts.some((district) => district.id === selectedDistrict)) {
     selectedDistrict = data.districts[0].id;
   }
+  if (!selectedSet || !data.sets.some((set) => set.id === selectedSet)) {
+    selectedSet = data.sets[0].id;
+  }
 
   document.querySelector("#crewName").textContent = user.profile.crewName;
   document.querySelector("#profileCrewName").value = user.profile.crewName;
@@ -129,8 +133,7 @@ function render() {
   document.querySelector("#pullBtn").textContent = `Pull - ${data.economy.pullCost}`;
   document.querySelector("#tenPullBtn").textContent = `Ten pull - ${data.economy.tenPullCost}`;
   document.querySelector("#collectionCount").textContent = `${derived.collectionCount}/${derived.relicCount} relics`;
-  document.querySelector("#errandCount").textContent = `${derived.errands.filter((item) => item.claimed).length}/${derived.errands.length} complete`;
-  document.querySelector("#setCount").textContent = `${derived.setProgress.filter((item) => item.complete).length}/${derived.setProgress.length} active`;
+  document.querySelector("#errandCount").textContent = `${derived.errands.filter((item) => item.claimed).length}/${derived.errands.length} goals`;
   document.querySelector("#lastPull").textContent = model.message || state.history?.[0] || "Ready.";
 
   renderDistrict(data, state, derived);
@@ -151,48 +154,54 @@ function renderDistrict(data, state, derived) {
   document.querySelector("#districtFocus").innerHTML = `
     <h3>${district.name}</h3>
     <p>${district.text}</p>
-    <dl>
-      <div><dt>Cost</dt><dd>${district.cost}</dd></div>
-      <div><dt>Reward</dt><dd>${district.coins} coins</dd></div>
-      <div><dt>Influence</dt><dd>${district.influence}</dd></div>
-    </dl>
+    <div class="meta-row">
+      <span>${district.cost} cost</span>
+      <span>${district.coins} coins</span>
+      <span>${district.influence} influence</span>
+    </div>
     <button id="workBtn" class="primary" ${locked ? "disabled" : ""}>Work District</button>
   `;
   document.querySelector("#workBtn").addEventListener("click", workDistrict);
 }
 
 function renderCollection(data, state, derived) {
-  document.querySelector("#sets").innerHTML = derived.setProgress.map((set) => {
-    const relicNames = set.relics.map((id) => data.relics.find((relic) => relic.id === id)?.name || id).join(", ");
-    return `
-      <details class="drawer" ${set.complete ? "open" : ""}>
-        <summary><span>${set.name}</span><strong>${set.owned}/${set.relics.length}</strong></summary>
-        <p>${relicNames}</p>
-        <p>${set.complete ? "Active" : "Collect all pieces"} · +${set.bonus} power</p>
-      </details>
-    `;
-  }).join("");
+  document.querySelector("#setSelect").innerHTML = data.sets.map((set) => (
+    `<option value="${set.id}" ${set.id === selectedSet ? "selected" : ""}>${set.name}</option>`
+  )).join("");
 
-  document.querySelector("#closet").innerHTML = data.relics.map((relic) => {
+  const set = derived.setProgress.find((item) => item.id === selectedSet);
+  const relics = data.relics.filter((relic) => relic.set === selectedSet);
+  document.querySelector("#setFocus").innerHTML = `
+    <h3>${set.name}</h3>
+    <p>${set.complete ? "Set bonus active" : "Collect every piece to activate the bonus."}</p>
+    <div class="meta-row">
+      <span>${set.owned}/${set.relics.length} owned</span>
+      <span>+${set.bonus} power</span>
+    </div>
+    <div class="mini-list">
+      ${relics.map((relic) => {
     const count = state.pulls[relic.id] || 0;
     return `
-      <div class="card" style="--rarity:${relic.color}">
-        <small>${relic.rarity}</small>
-        <h3>${relic.name}</h3>
-        <p><strong>x${count}</strong> · ${relic.power} power</p>
+      <div class="mini-item" style="--rarity:${relic.color}">
+        <span>${relic.name}</span>
+        <strong>x${count}</strong>
       </div>
     `;
-  }).join("");
+  }).join("")}
+    </div>
+  `;
 }
 
 function renderGoals(data, derived) {
-  document.querySelector("#errands").innerHTML = derived.errands.map((errand) => `
-    <details class="drawer" ${!errand.claimed ? "open" : ""}>
-      <summary><span>${errand.name}</span><strong>${errand.claimed ? "Done" : `${Math.min(errand.progress, errand.need)}/${errand.need}`}</strong></summary>
-      <p>${errand.text}</p>
-      <p>${rewardText(errand.reward)}</p>
-    </details>
-  `).join("");
+  const active = derived.errands.find((errand) => !errand.claimed) || derived.errands[0];
+  document.querySelector("#activeGoal").innerHTML = `
+    <h3>${active.name}</h3>
+    <p>${active.text}</p>
+    <div class="meta-row">
+      <span>${active.claimed ? "Done" : `${Math.min(active.progress, active.need)}/${active.need}`}</span>
+      <span>${rewardText(active.reward)}</span>
+    </div>
+  `;
 
   document.querySelector("#crew").innerHTML = data.crew.map((member) => `
     <div class="member">
@@ -210,10 +219,10 @@ function showPullResults() {
   const data = model.data;
   document.querySelector("#pullSummary").textContent = `${model.state.lastPull.length} relic${model.state.lastPull.length === 1 ? "" : "s"} revealed.`;
   document.querySelector("#pullResults").innerHTML = model.state.lastPull.map((relic) => `
-    <div class="card" style="--rarity:${relic.color}">
-      <small>${relic.rarity}</small>
-      <h3>${relic.name}</h3>
-      <p>${data.sets.find((set) => set.id === relic.set)?.name || relic.set} · ${relic.power} power</p>
+    <div class="result-card" style="--rarity:${relic.color}">
+      <span>${relic.rarity}</span>
+      <strong>${relic.name}</strong>
+      <small>${data.sets.find((set) => set.id === relic.set)?.name || relic.set} · ${relic.power} power</small>
     </div>
   `).join("");
   dialog.showModal();
@@ -241,10 +250,10 @@ function showGame() {
 }
 
 function applyView() {
-  document.querySelectorAll("[data-view]").forEach((tab) => {
-    tab.classList.toggle("active", tab.dataset.view === currentView);
+  document.querySelectorAll("[data-view]").forEach((item) => {
+    item.classList.toggle("active", item.dataset.view === currentView);
   });
-  document.querySelectorAll(".view").forEach((panel) => {
+  document.querySelectorAll(".screen").forEach((panel) => {
     panel.classList.toggle("active", panel.dataset.panel === currentView);
   });
 }
@@ -267,7 +276,11 @@ document.querySelector("#districtSelect").addEventListener("change", (event) => 
   selectedDistrict = event.target.value;
   render();
 });
-document.querySelector(".tabs").addEventListener("click", (event) => {
+document.querySelector("#setSelect").addEventListener("change", (event) => {
+  selectedSet = event.target.value;
+  render();
+});
+document.querySelector(".bottom-nav").addEventListener("click", (event) => {
   const view = event.target.dataset.view;
   if (!view) return;
   currentView = view;
