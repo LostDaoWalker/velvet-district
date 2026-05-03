@@ -2,7 +2,7 @@ services:
   - type: web
     name: velvet-district
     runtime: node
-    plan: starter
+    plan: free
     buildCommand: npm install
     startCommand: npm start
     envVars:
@@ -15,4 +15,4 @@ services:
 
 databases:
   - name: velvet-district-db
-    plan: starter
+    plan: free

@@ -41,3 +41,5 @@ This repo includes `render.yaml`:
 - `DATABASE_URL` wired from the database into the app.
 
 On Render, create a new Blueprint from the Git repo. Render will install dependencies, start the server, and provision Postgres.
+
+The included Blueprint uses Render's free web and Postgres plans so it can be created without paid resources. For a durable production game, upgrade the database to a paid current plan such as `basic-256mb` because free Render Postgres databases expire.
