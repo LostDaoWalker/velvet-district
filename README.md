@@ -12,14 +12,17 @@ A painterly baddie gacha PBBG for the browser, ready for Render hosting.
 
 ## Repeatable Content
 
-Game balance lives in `server.js` inside the `DATA` object:
+Game balance lives in `data/game-data.js`:
 
 - `districts` controls jobs, requirements, and rewards.
 - `relics` controls gacha items, rarity, color, and power.
 - `crew` controls the visible crew roster.
 - `ranks` controls influence titles.
+- `sets` controls wardrobe set bonuses.
+- `errands` controls repeatable progression goals.
 
-Painterly assets live in `assets/` and are referenced directly from `index.html`.
+Painterly assets live in `assets/`. Asset prompts and art direction live in `data/assets.js`.
+See `docs/development-workflow.md` for the repeatable content and asset process.
 
 ## Local Run
 

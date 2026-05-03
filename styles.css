@@ -104,7 +104,7 @@ h2 {
 }
 
 .topbar {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   margin: 12px 0;
 }
 
@@ -202,6 +202,10 @@ h2 {
   color: #1d0e10;
 }
 
+.primary.alt {
+  background: var(--gold);
+}
+
 .primary:disabled,
 .district button:disabled {
   cursor: not-allowed;
@@ -211,6 +215,17 @@ h2 {
 .ghost {
   background: #31242b;
   color: var(--ink);
+}
+
+.wide {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .relic-art {
@@ -261,6 +276,10 @@ h2 {
 
   .topbar,
   .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .button-row {
     grid-template-columns: 1fr;
   }
 

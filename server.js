@@ -2,49 +2,13 @@ import express from "express";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import pg from "pg";
+import { GAME_DATA } from "./data/game-data.js";
+import { ASSET_MANIFEST } from "./data/assets.js";
 
 const { Pool } = pg;
 const PORT = process.env.PORT || 3000;
 const SAVE_FILE = "dev-saves.json";
-const SAVE_KEY_VERSION = 1;
-
-const DATA = {
-  ranks: [
-    ["Rookie", 0],
-    ["Local Icon", 60],
-    ["Velvet Muse", 160],
-    ["District Queen", 340],
-    ["Runway Myth", 700]
-  ],
-  districts: [
-    { id: "boutique", name: "Boutique Shift", cost: 0, power: 0, coins: 38, influence: 6, text: "Style clients and stack coins." },
-    { id: "afterparty", name: "Afterparty Host", cost: 90, power: 18, coins: 76, influence: 14, text: "Turn charm into buzz." },
-    { id: "runway", name: "Pop-Up Runway", cost: 220, power: 45, coins: 138, influence: 31, text: "Serve a look the whole block remembers." },
-    { id: "penthouse", name: "Penthouse Collab", cost: 520, power: 95, coins: 260, influence: 70, text: "Close a luxe brand moment." }
-  ],
-  relics: [
-    { id: "lip", name: "Crimson Gloss", rarity: "Common", power: 4, color: "#ff6d67" },
-    { id: "shades", name: "Mirror Shades", rarity: "Common", power: 5, color: "#41d7c7" },
-    { id: "heels", name: "Lacquer Heels", rarity: "Rare", power: 12, color: "#f3bd54" },
-    { id: "chain", name: "Gold Chain Choker", rarity: "Rare", power: 14, color: "#f3bd54" },
-    { id: "bag", name: "Chrome Heart Bag", rarity: "Epic", power: 28, color: "#8b6cff" },
-    { id: "jacket", name: "Star Bomber", rarity: "Legendary", power: 52, color: "#ff93d5" }
-  ],
-  crew: [
-    { name: "Mika", role: "Closer", bonus: "+10% district coins" },
-    { name: "Vee", role: "Muse", bonus: "+1 pity after every job" },
-    { name: "Sable", role: "Scout", bonus: "Unlock checks use total power" }
-  ]
-};
-
-const baseState = {
-  coins: 180,
-  gems: 12,
-  influence: 0,
-  pity: 0,
-  pulls: {},
-  history: ["Welcome to Velvet District."]
-};
+const SAVE_KEY_VERSION = 2;
 
 const pool = process.env.DATABASE_URL
   ? new Pool({
@@ -60,83 +24,74 @@ app.use(express.static(".", { extensions: ["html"] }));
 await initStore();
 
 app.get("/api/config", (_req, res) => {
-  res.json({ data: DATA, version: SAVE_KEY_VERSION });
+  res.json({ data: GAME_DATA, assets: ASSET_MANIFEST, version: SAVE_KEY_VERSION });
 });
 
 app.post("/api/player", async (_req, res) => {
   const playerId = randomUUID();
-  const state = { ...baseState };
+  const state = newState();
   await savePlayer(playerId, state);
   res.json(viewModel(playerId, state, "New crew started."));
 });
 
 app.get("/api/player/:playerId", async (req, res) => {
   const state = await getPlayer(req.params.playerId);
-  if (!state) {
-    res.status(404).json({ error: "Player not found." });
-    return;
-  }
-  res.json(viewModel(req.params.playerId, state));
+  if (!state) return notFound(res);
+  res.json(viewModel(req.params.playerId, migrateState(state)));
+});
+
+app.post("/api/player/:playerId/daily", async (req, res) => {
+  await mutate(req, res, (state) => {
+    const today = dayKey();
+    if (state.lastDaily === today) throw playerError("Daily reward already claimed.");
+    state.lastDaily = today;
+    state.energy = GAME_DATA.economy.maxEnergy;
+    state.coins += GAME_DATA.economy.dailyCoins;
+    state.gems += GAME_DATA.economy.dailyGems;
+    pushHistory(state, `Daily glam claimed: +${GAME_DATA.economy.dailyCoins} coins, +${GAME_DATA.economy.dailyGems} gems, energy refilled.`);
+  });
 });
 
 app.post("/api/player/:playerId/work", async (req, res) => {
-  const state = await getPlayer(req.params.playerId);
-  if (!state) {
-    res.status(404).json({ error: "Player not found." });
-    return;
-  }
+  await mutate(req, res, (state) => {
+    const district = GAME_DATA.districts.find((item) => item.id === req.body?.districtId);
+    if (!district) throw playerError("Unknown district.");
+    const derived = derive(state);
+    if (state.energy < district.energy) throw playerError("Not enough energy.");
+    if (state.coins < district.cost || derived.power < district.power) throw playerError("That district is still locked.");
 
-  const district = DATA.districts.find((item) => item.id === req.body?.districtId);
-  if (!district) {
-    res.status(400).json({ error: "Unknown district." });
-    return;
-  }
-
-  const power = totalPower(state);
-  if (state.coins < district.cost || power < district.power) {
-    res.status(400).json({ error: "That district is still locked." });
-    return;
-  }
-
-  state.coins = state.coins - district.cost + Math.round(district.coins * 1.1);
-  state.influence += district.influence;
-  state.pity += 1;
-  pushHistory(state, `${district.name} cleared. Coins and influence are up.`);
-  await savePlayer(req.params.playerId, state);
-  res.json(viewModel(req.params.playerId, state));
+    state.energy -= district.energy;
+    state.coins = state.coins - district.cost + Math.round(district.coins * 1.1);
+    state.influence += district.influence;
+    state.pity += 1;
+    state.stats.work += 1;
+    state.stats.districts[district.id] = (state.stats.districts[district.id] || 0) + 1;
+    pushHistory(state, `${district.name} cleared. +${district.coins} coins, +${district.influence} influence.`);
+    completeErrands(state);
+  });
 });
 
 app.post("/api/player/:playerId/pull", async (req, res) => {
-  const state = await getPlayer(req.params.playerId);
-  if (!state) {
-    res.status(404).json({ error: "Player not found." });
-    return;
-  }
-  if (state.coins < 100) {
-    res.status(400).json({ error: "Not enough coins." });
-    return;
-  }
+  await mutate(req, res, (state) => {
+    const count = req.body?.count === 10 ? 10 : 1;
+    const cost = count === 10 ? GAME_DATA.economy.tenPullCost : GAME_DATA.economy.pullCost;
+    if (state.coins < cost) throw playerError("Not enough coins.");
 
-  state.coins -= 100;
-  const relic = weightedRelic(state);
-  state.pulls[relic.id] = (state.pulls[relic.id] || 0) + 1;
-  state.pity = relic.rarity === "Legendary" ? 0 : state.pity + 1;
-
-  if (state.pity >= 10 && relic.rarity !== "Legendary") {
-    const legendary = DATA.relics.find((item) => item.rarity === "Legendary");
-    state.pulls[legendary.id] = (state.pulls[legendary.id] || 0) + 1;
-    state.pity = 0;
-    pushHistory(state, `Pity sparkled into ${legendary.name}.`);
-  } else {
-    pushHistory(state, `Pulled ${relic.name} (${relic.rarity}).`);
-  }
-
-  await savePlayer(req.params.playerId, state);
-  res.json(viewModel(req.params.playerId, state));
+    state.coins -= cost;
+    const names = [];
+    for (let i = 0; i < count; i += 1) {
+      const relic = rollRelic(state);
+      state.pulls[relic.id] = (state.pulls[relic.id] || 0) + 1;
+      state.stats.pull += 1;
+      names.push(`${relic.name} (${relic.rarity})`);
+    }
+    pushHistory(state, `Pulled ${names.join(", ")}.`);
+    completeErrands(state);
+  });
 });
 
 app.post("/api/player/:playerId/reset", async (req, res) => {
-  const state = { ...baseState, history: ["Fresh run started."] };
+  const state = newState(["Fresh run started."]);
   await savePlayer(req.params.playerId, state);
   res.json(viewModel(req.params.playerId, state));
 });
@@ -144,6 +99,19 @@ app.post("/api/player/:playerId/reset", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Velvet District is running on port ${PORT}`);
 });
+
+async function mutate(req, res, change) {
+  const state = await getPlayer(req.params.playerId);
+  if (!state) return notFound(res);
+  try {
+    const migrated = migrateState(state);
+    change(migrated);
+    await savePlayer(req.params.playerId, migrated);
+    res.json(viewModel(req.params.playerId, migrated));
+  } catch (error) {
+    res.status(error.status || 500).json({ error: error.message || "Server error." });
+  }
+}
 
 async function initStore() {
   if (!pool) return;
@@ -162,9 +130,7 @@ async function getPlayer(playerId) {
     const result = await pool.query("select state from players where id = $1", [playerId]);
     return result.rows[0]?.state || null;
   }
-
-  const saves = readSaves();
-  return saves[playerId] || null;
+  return readSaves()[playerId] || null;
 }
 
 async function savePlayer(playerId, state) {
@@ -188,41 +154,107 @@ function readSaves() {
   return JSON.parse(readFileSync(SAVE_FILE, "utf8"));
 }
 
-function totalPower(state) {
-  return DATA.relics.reduce((sum, relic) => sum + (state.pulls[relic.id] || 0) * relic.power, 0);
+function newState(history = ["Welcome to Velvet District."]) {
+  return {
+    coins: GAME_DATA.economy.startingCoins,
+    gems: GAME_DATA.economy.startingGems,
+    energy: GAME_DATA.economy.maxEnergy,
+    influence: 0,
+    pity: 0,
+    lastDaily: "",
+    pulls: {},
+    errands: {},
+    stats: { work: 0, pull: 0, districts: {} },
+    history
+  };
 }
 
-function currentRank(state) {
-  return DATA.ranks.reduce((best, rank) => state.influence >= rank[1] ? rank[0] : best, DATA.ranks[0][0]);
+function migrateState(state) {
+  return {
+    ...newState(state.history || ["Welcome back."]),
+    ...state,
+    energy: Number.isFinite(state.energy) ? state.energy : GAME_DATA.economy.maxEnergy,
+    errands: state.errands || {},
+    stats: {
+      work: state.stats?.work || 0,
+      pull: state.stats?.pull || 0,
+      districts: state.stats?.districts || {}
+    }
+  };
 }
 
-function weightedRelic(state) {
-  const legendaryBoost = state.pity >= 9;
-  const table = DATA.relics.flatMap((relic) => {
-    const weight = legendaryBoost && relic.rarity === "Legendary" ? 80 :
-      relic.rarity === "Common" ? 45 :
-      relic.rarity === "Rare" ? 24 :
-      relic.rarity === "Epic" ? 9 : 2;
+function derive(state) {
+  const setProgress = GAME_DATA.sets.map((set) => {
+    const owned = set.relics.filter((id) => state.pulls[id] > 0);
+    return { ...set, owned: owned.length, complete: owned.length === set.relics.length };
+  });
+  const relicPower = GAME_DATA.relics.reduce((sum, relic) => sum + (state.pulls[relic.id] || 0) * relic.power, 0);
+  const setPower = setProgress.filter((set) => set.complete).reduce((sum, set) => sum + set.bonus, 0);
+  const power = relicPower + setPower;
+  const rank = GAME_DATA.ranks.reduce((best, item) => state.influence >= item[1] ? item[0] : best, GAME_DATA.ranks[0][0]);
+  const collectionCount = Object.keys(state.pulls).filter((id) => state.pulls[id] > 0).length;
+  const errands = GAME_DATA.errands.map((errand) => {
+    const progress = errandProgress(state, errand);
+    return { ...errand, progress, complete: progress >= errand.need, claimed: Boolean(state.errands[errand.id]) };
+  });
+  return { power, rank, collectionCount, relicCount: GAME_DATA.relics.length, setProgress, errands };
+}
+
+function errandProgress(state, errand) {
+  if (errand.target === "work") return state.stats.work;
+  if (errand.target === "pull") return state.stats.pull;
+  if (errand.target === "collection") return Object.keys(state.pulls).filter((id) => state.pulls[id] > 0).length;
+  return 0;
+}
+
+function completeErrands(state) {
+  for (const errand of GAME_DATA.errands) {
+    if (state.errands[errand.id]) continue;
+    if (errandProgress(state, errand) < errand.need) continue;
+    state.errands[errand.id] = true;
+    state.coins += errand.reward.coins || 0;
+    state.gems += errand.reward.gems || 0;
+    state.influence += errand.reward.influence || 0;
+    pushHistory(state, `${errand.name} complete. Rewards added.`);
+  }
+}
+
+function rollRelic(state) {
+  const forcedLegendary = state.pity >= GAME_DATA.economy.pityLimit - 1;
+  const table = GAME_DATA.relics.flatMap((relic) => {
+    const weight = forcedLegendary && relic.rarity === "Legendary" ? 100 : GAME_DATA.rarityWeights[relic.rarity];
     return Array(weight).fill(relic);
   });
-  return table[Math.floor(Math.random() * table.length)];
+  const relic = table[Math.floor(Math.random() * table.length)];
+  state.pity = relic.rarity === "Legendary" ? 0 : state.pity + 1;
+  return relic;
 }
 
 function pushHistory(state, message) {
-  state.history = [message, ...(state.history || [])].slice(0, 6);
+  state.history = [message, ...(state.history || [])].slice(0, 8);
 }
 
 function viewModel(playerId, state, message) {
   return {
     playerId,
     state,
-    data: DATA,
-    derived: {
-      power: totalPower(state),
-      rank: currentRank(state),
-      collectionCount: Object.keys(state.pulls).length,
-      relicCount: DATA.relics.length
-    },
+    data: GAME_DATA,
+    assets: ASSET_MANIFEST,
+    derived: derive(state),
     message: message || state.history?.[0] || ""
   };
+}
+
+function dayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function playerError(message) {
+  const error = new Error(message);
+  error.status = 400;
+  return error;
+}
+
+function notFound(res) {
+  res.status(404).json({ error: "Player not found." });
 }

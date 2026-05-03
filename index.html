@@ -20,6 +20,7 @@
       <section class="topbar" aria-label="Player resources">
         <div><span>Coins</span><strong id="coins">0</strong></div>
         <div><span>Gems</span><strong id="gems">0</strong></div>
+        <div><span>Energy</span><strong id="energy">0</strong></div>
         <div><span>Influence</span><strong id="influence">0</strong></div>
         <div><span>Power</span><strong id="power">0</strong></div>
       </section>
@@ -39,7 +40,11 @@
             <span id="pity">Pity 0/10</span>
           </div>
           <img class="relic-art" src="assets/relics-painterly.png" alt="Painterly fashion relics">
-          <button id="pullBtn" class="primary">Pull relic - 100 coins</button>
+          <div class="button-row">
+            <button id="pullBtn" class="primary">Pull - 100 coins</button>
+            <button id="tenPullBtn" class="primary alt">Ten pull - 900</button>
+          </div>
+          <button id="dailyBtn" class="ghost wide">Daily glam</button>
           <div id="lastPull" class="last-pull">Your first pull is waiting.</div>
         </article>
 
@@ -49,6 +54,22 @@
             <span id="collectionCount">0/0</span>
           </div>
           <div id="closet" class="closet"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h2>Errands</h2>
+            <span id="errandCount">0/0</span>
+          </div>
+          <div id="errands" class="districts"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h2>Sets</h2>
+            <span id="setCount">0/0</span>
+          </div>
+          <div id="sets" class="districts"></div>
         </article>
 
         <article class="panel">
