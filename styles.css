@@ -4,11 +4,11 @@
   --ink: #fff7ee;
   --muted: #cbbfb8;
   --panel: #221a1f;
+  --soft: #191317;
   --line: #4b363e;
   --coral: #ff6d67;
   --teal: #41d7c7;
   --gold: #f3bd54;
-  --violet: #8b6cff;
 }
 
 * {
@@ -31,14 +31,14 @@ button {
 }
 
 .shell {
-  width: min(1180px, calc(100% - 28px));
+  width: min(1040px, calc(100% - 28px));
   margin: 0 auto;
-  padding: 18px 0 32px;
+  padding: 14px 0 88px;
 }
 
 .hero {
   position: relative;
-  min-height: 340px;
+  min-height: 220px;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -57,22 +57,22 @@ button {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(12, 8, 10, .88), rgba(12, 8, 10, .34), rgba(12, 8, 10, .2));
+  background: linear-gradient(90deg, rgba(12, 8, 10, .9), rgba(12, 8, 10, .36), rgba(12, 8, 10, .12));
 }
 
 .hero-copy {
   position: relative;
   z-index: 1;
-  width: min(540px, 92%);
-  padding: 42px;
+  width: min(440px, 92%);
+  padding: 28px;
 }
 
 .kicker {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   color: var(--teal);
+  font-size: .78rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0;
 }
 
 h1, h2, p {
@@ -80,65 +80,98 @@ h1, h2, p {
 }
 
 h1 {
-  margin-bottom: 12px;
-  font-size: clamp(3rem, 8vw, 6.5rem);
+  margin-bottom: 10px;
+  font-size: clamp(2.5rem, 7vw, 5rem);
   line-height: .9;
   letter-spacing: 0;
 }
 
 h2 {
-  margin-bottom: 0;
-  font-size: 1.1rem;
+  margin-bottom: 4px;
+  font-size: 1.05rem;
 }
 
-.hero-copy p:last-child {
-  max-width: 32rem;
+.hero-copy p:last-child,
+.panel-head p,
+.district p,
+.card p,
+.member p,
+.toast {
   color: var(--muted);
-  font-size: 1.08rem;
 }
 
-.topbar,
-.grid {
+.status {
   display: grid;
-  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 10px 0;
 }
 
-.topbar {
-  grid-template-columns: repeat(5, 1fr);
-  margin: 12px 0;
-}
-
-.topbar div,
-.panel {
+.status div,
+.panel,
+.toast {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
 }
 
-.topbar div {
-  padding: 14px;
+.status div {
+  padding: 12px 14px;
 }
 
-.topbar span,
-.panel-head span,
-.card small,
-.log {
-  color: var(--muted);
-}
-
-.topbar strong {
+.status span {
   display: block;
-  margin-top: 4px;
-  font-size: 1.6rem;
+  color: var(--muted);
+  font-size: .8rem;
 }
 
-.grid {
-  grid-template-columns: 1.25fr .9fr;
+.status strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 1.45rem;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tab,
+.ghost,
+.primary,
+.district button {
+  min-height: 42px;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-weight: 800;
+}
+
+.tab {
+  background: #211820;
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+
+.tab.active {
+  background: var(--ink);
+  color: #1d0e10;
+}
+
+.view {
+  display: none;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+  gap: 10px;
   align-items: start;
 }
 
+.view.active {
+  display: grid;
+}
+
 .panel {
-  padding: 16px;
+  padding: 14px;
 }
 
 .panel-head {
@@ -146,24 +179,27 @@ h2 {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
+}
+
+.panel-head p {
+  margin-bottom: 0;
 }
 
 .districts,
-.closet,
+.stack,
 .crew {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .district,
 .card,
-.member,
-.last-pull {
+.member {
   border: 1px solid #5b444e;
   border-radius: 8px;
-  background: #191317;
-  padding: 12px;
+  background: var(--soft);
+  padding: 11px;
 }
 
 .district {
@@ -177,23 +213,14 @@ h2 {
 .card h3,
 .member h3 {
   margin: 0 0 4px;
-  font-size: 1rem;
+  font-size: .98rem;
 }
 
 .district p,
 .card p,
 .member p {
   margin: 0;
-  color: var(--muted);
-}
-
-.primary,
-.district button,
-.ghost {
-  min-height: 42px;
-  border-radius: 8px;
-  padding: 0 14px;
-  font-weight: 800;
+  font-size: .9rem;
 }
 
 .primary,
@@ -207,7 +234,8 @@ h2 {
 }
 
 .primary:disabled,
-.district button:disabled {
+.district button:disabled,
+.ghost:disabled {
   cursor: not-allowed;
   opacity: .5;
 }
@@ -217,37 +245,35 @@ h2 {
   color: var(--ink);
 }
 
-.wide {
-  width: 100%;
-  margin-top: 10px;
-}
-
 .button-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
 }
 
 .relic-art {
   width: 100%;
-  aspect-ratio: 1.6;
+  aspect-ratio: 1.8;
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid var(--line);
-  margin-bottom: 12px;
-}
-
-.last-pull {
-  margin-top: 12px;
+  margin-bottom: 10px;
 }
 
 .closet {
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(136px, 1fr));
+  gap: 8px;
 }
 
 .card {
-  min-height: 118px;
+  min-height: 96px;
   border-color: var(--rarity, #5b444e);
+}
+
+.card small,
+.panel-head span {
+  color: var(--muted);
 }
 
 .card strong {
@@ -255,35 +281,43 @@ h2 {
 }
 
 .member {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 10px;
 }
 
-.log {
-  min-height: 46px;
-  margin-top: 12px;
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  width: min(640px, calc(100% - 28px));
+  transform: translateX(-50%);
+  padding: 12px 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .28);
 }
 
 @media (max-width: 760px) {
+  .shell {
+    padding-bottom: 104px;
+  }
+
   .hero {
-    min-height: 420px;
+    min-height: 250px;
   }
 
   .hero-copy {
-    padding: 28px;
+    padding: 24px;
   }
 
-  .topbar,
-  .grid {
+  .status,
+  .view,
+  .view.active {
     grid-template-columns: 1fr;
   }
 
-  .button-row {
-    grid-template-columns: 1fr;
-  }
-
-  .district {
+  .button-row,
+  .district,
+  .member {
     grid-template-columns: 1fr;
   }
 }

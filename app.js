@@ -2,6 +2,7 @@ const PLAYER_KEY = "velvet-district-player-id-v1";
 
 let model = null;
 let busy = false;
+let currentView = "play";
 
 async function api(path, options = {}) {
   const response = await fetch(path, {
@@ -69,19 +70,19 @@ function render() {
 
   const { data, state, derived } = model;
   document.querySelector("#coins").textContent = state.coins;
-  document.querySelector("#gems").textContent = state.gems;
   document.querySelector("#energy").textContent = `${state.energy}/${data.economy.maxEnergy}`;
-  document.querySelector("#influence").textContent = state.influence;
   document.querySelector("#power").textContent = derived.power;
   document.querySelector("#pity").textContent = `Pity ${state.pity}/${data.economy.pityLimit}`;
-  document.querySelector("#rank").textContent = derived.rank;
+  document.querySelector("#gems").textContent = `${state.gems} gems`;
+  document.querySelector("#rank").textContent = `${derived.rank} · ${state.influence} influence`;
   document.querySelector("#pullBtn").disabled = busy || state.coins < data.economy.pullCost;
   document.querySelector("#tenPullBtn").disabled = busy || state.coins < data.economy.tenPullCost;
   document.querySelector("#dailyBtn").disabled = busy || state.lastDaily === new Date().toISOString().slice(0, 10);
-  document.querySelector("#collectionCount").textContent = `${derived.collectionCount}/${derived.relicCount}`;
-  document.querySelector("#errandCount").textContent = `${derived.errands.filter((item) => item.claimed).length}/${derived.errands.length}`;
-  document.querySelector("#setCount").textContent = `${derived.setProgress.filter((item) => item.complete).length}/${derived.setProgress.length}`;
-  document.querySelector("#log").textContent = model.message || state.history?.[0] || "";
+  document.querySelector("#pullBtn").textContent = `Pull - ${data.economy.pullCost}`;
+  document.querySelector("#tenPullBtn").textContent = `Ten pull - ${data.economy.tenPullCost}`;
+  document.querySelector("#collectionCount").textContent = `${derived.collectionCount}/${derived.relicCount} relics`;
+  document.querySelector("#errandCount").textContent = `${derived.errands.filter((item) => item.claimed).length}/${derived.errands.length} complete`;
+  document.querySelector("#setCount").textContent = `${derived.setProgress.filter((item) => item.complete).length}/${derived.setProgress.length} active`;
   document.querySelector("#lastPull").textContent = model.message || state.history?.[0] || "Your first pull is waiting.";
 
   document.querySelector("#districts").innerHTML = data.districts.map((district) => {
@@ -141,6 +142,8 @@ function render() {
       <button disabled>${set.complete ? "On" : "Locked"}</button>
     </div>
   `).join("");
+
+  applyView();
 }
 
 function rewardText(reward) {
@@ -151,9 +154,24 @@ document.querySelector("#pullBtn").addEventListener("click", pull);
 document.querySelector("#tenPullBtn").addEventListener("click", () => pullCount(10));
 document.querySelector("#dailyBtn").addEventListener("click", daily);
 document.querySelector("#resetBtn").addEventListener("click", reset);
+document.querySelector(".tabs").addEventListener("click", (event) => {
+  const view = event.target.dataset.view;
+  if (!view) return;
+  currentView = view;
+  applyView();
+});
 document.querySelector("#districts").addEventListener("click", (event) => {
   const districtId = event.target.dataset.district;
   if (districtId) workDistrict(districtId);
 });
+
+function applyView() {
+  document.querySelectorAll(".tab").forEach((tab) => {
+    tab.classList.toggle("active", tab.dataset.view === currentView);
+  });
+  document.querySelectorAll(".view").forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.panel === currentView);
+  });
+}
 
 boot();

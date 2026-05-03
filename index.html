@@ -13,73 +13,97 @@
         <div class="hero-copy">
           <p class="kicker">Baddie Gacha PBBG</p>
           <h1>Velvet District</h1>
-          <p>Build a painterly style crew, pull relics, work districts, and climb the scene.</p>
+          <p id="rank">Rookie</p>
         </div>
       </section>
 
-      <section class="topbar" aria-label="Player resources">
+      <section class="status" aria-label="Player resources">
         <div><span>Coins</span><strong id="coins">0</strong></div>
-        <div><span>Gems</span><strong id="gems">0</strong></div>
         <div><span>Energy</span><strong id="energy">0</strong></div>
-        <div><span>Influence</span><strong id="influence">0</strong></div>
         <div><span>Power</span><strong id="power">0</strong></div>
       </section>
 
-      <section class="grid">
-        <article class="panel actions">
+      <nav class="tabs" aria-label="Game sections">
+        <button class="tab active" data-view="play">Play</button>
+        <button class="tab" data-view="collection">Collection</button>
+        <button class="tab" data-view="goals">Goals</button>
+      </nav>
+
+      <section class="view active" data-panel="play">
+        <article class="panel focus-panel">
           <div class="panel-head">
-            <h2>Districts</h2>
-            <button id="resetBtn" class="ghost">Reset</button>
+            <div>
+              <h2>District Run</h2>
+              <p>Pick one job, then pull style relics with the coins.</p>
+            </div>
+            <button id="dailyBtn" class="ghost">Daily glam</button>
           </div>
           <div id="districts" class="districts"></div>
         </article>
 
-        <article class="panel gacha">
+        <article class="panel gacha-panel">
           <div class="panel-head">
-            <h2>Gacha</h2>
-            <span id="pity">Pity 0/10</span>
+            <div>
+              <h2>Gacha</h2>
+              <p id="pity">Pity 0/10</p>
+            </div>
+            <span id="gems">0 gems</span>
           </div>
           <img class="relic-art" src="assets/relics-painterly.png" alt="Painterly fashion relics">
           <div class="button-row">
-            <button id="pullBtn" class="primary">Pull - 100 coins</button>
-            <button id="tenPullBtn" class="primary alt">Ten pull - 900</button>
+            <button id="pullBtn" class="primary">Pull</button>
+            <button id="tenPullBtn" class="primary alt">Ten pull</button>
           </div>
-          <button id="dailyBtn" class="ghost wide">Daily glam</button>
-          <div id="lastPull" class="last-pull">Your first pull is waiting.</div>
         </article>
+      </section>
 
+      <section class="view" data-panel="collection">
         <article class="panel">
           <div class="panel-head">
-            <h2>Closet</h2>
-            <span id="collectionCount">0/0</span>
+            <div>
+              <h2>Closet</h2>
+              <p id="collectionCount">0/0 relics</p>
+            </div>
           </div>
           <div id="closet" class="closet"></div>
         </article>
 
         <article class="panel">
           <div class="panel-head">
-            <h2>Errands</h2>
-            <span id="errandCount">0/0</span>
+            <div>
+              <h2>Sets</h2>
+              <p id="setCount">0/0 active</p>
+            </div>
           </div>
-          <div id="errands" class="districts"></div>
+          <div id="sets" class="stack"></div>
+        </article>
+      </section>
+
+      <section class="view" data-panel="goals">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Errands</h2>
+              <p id="errandCount">0/0 complete</p>
+            </div>
+          </div>
+          <div id="errands" class="stack"></div>
         </article>
 
         <article class="panel">
           <div class="panel-head">
-            <h2>Sets</h2>
-            <span id="setCount">0/0</span>
-          </div>
-          <div id="sets" class="districts"></div>
-        </article>
-
-        <article class="panel">
-          <div class="panel-head">
-            <h2>Crew</h2>
-            <span id="rank">Rookie</span>
+            <div>
+              <h2>Crew</h2>
+              <p>Quiet bonuses, always on.</p>
+            </div>
+            <button id="resetBtn" class="ghost">Reset</button>
           </div>
           <div id="crew" class="crew"></div>
-          <div id="log" class="log" aria-live="polite"></div>
         </article>
+      </section>
+
+      <section class="toast" aria-live="polite">
+        <div id="lastPull">Loading Velvet District...</div>
       </section>
     </main>
 
